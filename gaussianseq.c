@@ -5,7 +5,7 @@
  ***************************************************************************/
 
 #include <stdio.h>
-
+#include <stdlib.h>
 #define MAX_SIZE 4096
 
 typedef double matrix[MAX_SIZE][MAX_SIZE];
@@ -182,4 +182,5 @@ Read_Options(int argc, char **argv)
                     printf("HELP: try %s -u \n\n", prog);
                     break;
             }
+    return 0;
 }
