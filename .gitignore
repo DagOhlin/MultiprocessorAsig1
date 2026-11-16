@@ -1,0 +1,9 @@
+
+gauss_sequential
+gauss_parallel
+gauss_c*
+output_file_name
+qsort_sequential
+qsort_parallel
+*.o
+*.out
