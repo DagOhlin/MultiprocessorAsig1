@@ -74,19 +74,32 @@ void work(void)
 	    y[k] = b[k] / A[k][k];
 	    A[k][k] = 1.0;
         int block = (N-(k+1) + numThreads - 1) / numThreads;
-	    for (size_t t = 0; t < numThreads; t++) // i still want to test cut of for when to stop doing threads
-        {
-            args[t].start = (k+1) + t*block;
-            args[t].end = min(args[t].start + block, N);
-            args[t].pivotK = k;
-            pthread_create(&(threads[t]), // our handle for the child
-			NULL, // attributes of the child
-			child, // the function it should run
-			(void*)&args[t]); // args to that function
-	    }
-        for (unsigned int id = 0; id < numThreads; id++) {
-		pthread_join(threads[id], NULL );
-	    }
+        if (N - (k+1) > 700) // i added a cut of for when thread overhead is not worth it anymore
+            {
+            for (size_t t = 0; t < numThreads; t++)
+            {
+                args[t].start = (k+1) + t*block;
+                args[t].end = min(args[t].start + block, N);
+                args[t].pivotK = k;
+                pthread_create(&(threads[t]), // our handle for the child
+                NULL, // attributes of the child
+                child, // the function it should run
+                (void*)&args[t]); // args to that function
+            }
+            for (unsigned int id = 0; id < numThreads; id++) {
+            pthread_join(threads[id], NULL );
+            }
+        }
+        else{
+            for (i = k+1; i < N; i++) {
+	        for (j = k+1; j < N; j++)
+		        A[i][j] = A[i][j] - A[i][k]*A[k][j]; /* Elimination step */
+	        b[i] = b[i] - A[i][k]*y[k];
+	        A[i][k] = 0.0;
+	        }
+        }
+        
+	    
     }
         
 }
