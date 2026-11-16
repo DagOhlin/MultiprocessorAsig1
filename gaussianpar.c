@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-#include <math.h>
+#define min(a,b) ((a)<(b)?(a):(b)) // macro because i cant find what to include for it in c
 #define MAX_SIZE 4096
 
 typedef double matrix[MAX_SIZE][MAX_SIZE];
@@ -56,6 +56,7 @@ void* child(void* params) {
 	        b[i] = b[i] - A[i][k]*y[k];
 	        A[i][k] = 0.0;
 	    }
+    return NULL;
 }
 
 void work(void)
@@ -72,8 +73,8 @@ void work(void)
 	       A[k][j] = A[k][j] / A[k][k]; /* Division step */
 	    y[k] = b[k] / A[k][k];
 	    A[k][k] = 1.0;
-        int block = ceil((N-1)-(k+1) + numThreads - 1 / numThreads);
-	    for (size_t t = 0; t < numThreads; t++)
+        int block = (N-(k+1) + numThreads - 1) / numThreads;
+	    for (size_t t = 0; t < numThreads; t++) // i still want to test cut of for when to stop doing threads
         {
             args[t].start = (k+1) + t*block;
             args[t].end = min(args[t].start + block, N);
@@ -82,6 +83,9 @@ void work(void)
 			NULL, // attributes of the child
 			child, // the function it should run
 			(void*)&args[t]); // args to that function
+	    }
+        for (unsigned int id = 0; id < numThreads; id++) {
+		pthread_join(threads[id], NULL );
 	    }
     }
         
