@@ -63,7 +63,7 @@ void work(void)
 {
     int i, j, k;
 
-    int numThreads = 16;
+    int numThreads = 8;
     pthread_t threads[numThreads];
     struct threadArgs args[numThreads];
 
