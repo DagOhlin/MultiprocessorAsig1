@@ -74,7 +74,7 @@ void work(void)
 	    y[k] = b[k] / A[k][k];
 	    A[k][k] = 1.0;
         int block = (N-(k+1) + numThreads - 1) / numThreads;
-        if (N - (k+1) > 200) // i added a cut of for when thread overhead is not worth it anymore
+        if (N - (k+1) > 800) // i added a cut of for when thread overhead is not worth it anymore
             {
             for (size_t t = 0; t < numThreads; t++)
             {
