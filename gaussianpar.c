@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-
+#include <math.h>
 #define MAX_SIZE 4096
 
 typedef double matrix[MAX_SIZE][MAX_SIZE];
@@ -42,13 +42,20 @@ main(int argc, char **argv)
 }
 
 struct threadArgs {
-	unsigned int id;
-	unsigned int numThreads;
+	int start;
+	int end;
+    int pivotK;
 };
 
 void* child(void* params) {
 	struct threadArgs *args = (struct threadArgs*) params;
-	unsigned int childID = args->id;
+    int k = args->pivotK;
+    for (int i = args->start; i < args->end; i++) {
+	        for (int j = k+1; j < N; j++)
+		        A[i][j] = A[i][j] - A[i][k]*A[k][j]; /* Elimination step */
+	        b[i] = b[i] - A[i][k]*y[k];
+	        A[i][k] = 0.0;
+	    }
 }
 
 void work(void)
@@ -65,8 +72,12 @@ void work(void)
 	       A[k][j] = A[k][j] / A[k][k]; /* Division step */
 	    y[k] = b[k] / A[k][k];
 	    A[k][k] = 1.0;
+        int block = ceil((N-1)-(k+1) + numThreads - 1 / numThreads);
 	    for (size_t t = 0; t < numThreads; t++)
         {
+            args[t].start = (k+1) + t*block;
+            args[t].end = min(args[t].start + block, N);
+            args[t].pivotK = k;
             pthread_create(&(threads[t]), // our handle for the child
 			NULL, // attributes of the child
 			child, // the function it should run
