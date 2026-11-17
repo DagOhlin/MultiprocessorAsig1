@@ -14,6 +14,15 @@
 
 static int *v;
 
+#include <time.h>
+
+static double now(void)// helper for timing
+{
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec + ts.tv_nsec * 1e-9;
+}
+
 static void
 print_array(void)
 {
@@ -90,6 +99,11 @@ main(int argc, char **argv)
 {
     init_array();
     //print_array();
+    double t0 = now();
     quick_sort(v, 0, MAX_ITEMS-1);
+    double t1 = now();
     //print_array();
+
+
+    printf("sort time: %.3f s\n", t1 - t0);
 }

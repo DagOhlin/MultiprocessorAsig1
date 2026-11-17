@@ -1,6 +1,6 @@
 /***************************************************************************
  *
- * Sequential version of Gaussian elimination
+ * parallel version of Gaussian elimination
  *
  ***************************************************************************/
 
@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-#define min(a,b) ((a)<(b)?(a):(b)) // macro because i cant find what to include for it in c
+#define min(a,b) ((a)<(b)?(a):(b)) // macro because c has no lib for min
 #define MAX_SIZE 4096
 
 typedef double matrix[MAX_SIZE][MAX_SIZE];
@@ -41,16 +41,16 @@ main(int argc, char **argv)
 	   Print_Matrix();
 }
 
-struct threadArgs {
+struct threadArgs { // start and end of rows for thread to handel aswell as pviot 
 	int start;
 	int end;
     int pivotK;
 };
 
-void* child(void* params) {
+void* child(void* params) { // thread function
 	struct threadArgs *args = (struct threadArgs*) params;
     int k = args->pivotK;
-    for (int i = args->start; i < args->end; i++) {
+    for (int i = args->start; i < args->end; i++) { // elimination part from the work function moved to thread
 	        for (int j = k+1; j < N; j++)
 		        A[i][j] = A[i][j] - A[i][k]*A[k][j]; /* Elimination step */
 	        b[i] = b[i] - A[i][k]*y[k];
@@ -63,7 +63,7 @@ void work(void)
 {
     int i, j, k;
 
-    int numThreads = 8;
+    int numThreads = 8; // 8 instead of 16 threads performes better
     pthread_t threads[numThreads];
     struct threadArgs args[numThreads];
 
@@ -86,7 +86,7 @@ void work(void)
                 child, // the function it should run
                 (void*)&args[t]); // args to that function
             }
-            for (unsigned int id = 0; id < numThreads; id++) {
+            for (unsigned int id = 0; id < numThreads; id++) { // waiting for all threads to be done
             pthread_join(threads[id], NULL );
             }
         }
