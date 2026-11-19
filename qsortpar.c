@@ -100,7 +100,7 @@ quick_sort(int *v, unsigned low, unsigned high, int depth)
     pthread_t thread;
     struct sortArgs args;
     /* sort the two sub arrays */
-    if (depth < 7 && low < pivot_index){
+    if (depth < 13 && low < pivot_index){
         args.v = v;
         args.low = low;
         args.high = pivot_index-1;
@@ -117,7 +117,7 @@ quick_sort(int *v, unsigned low, unsigned high, int depth)
     
     if (pivot_index < high)
         quick_sort(v, pivot_index+1, high, depth+1);
-    if (depth < 7 && low < pivot_index)pthread_join(thread, NULL );
+    if (depth < 13 && low < pivot_index)pthread_join(thread, NULL );
 }
 
 
