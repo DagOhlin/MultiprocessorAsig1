@@ -42,6 +42,23 @@ init_array(void)
         v[i] = rand();
 }
 
+static void checkArray(int *v){
+    for (int i = 0; i < MAX_ITEMS; i++){
+        if (v[i] <= v[i+1])
+        {
+            
+        }
+        else
+        {
+            printf("array not sorted correctly\n");
+            return;
+        }
+        
+    } 
+    printf("array sorted correctly\n");
+    return;
+}
+
 static unsigned
 partition(int *v, unsigned low, unsigned high, unsigned pivot_index)
 {
