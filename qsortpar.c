@@ -159,4 +159,5 @@ main(int argc, char **argv)
 
 
     printf("sort time: %.3f s\n", t1 - t0);
+    checkArray(v);
 }
