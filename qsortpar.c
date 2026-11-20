@@ -43,7 +43,7 @@ init_array(void)
 }
 
 static void checkArray(int *v){
-    for (int i = 0; i < MAX_ITEMS; i++){
+    for (int i = 0; i < MAX_ITEMS - 1; i++){
         if (v[i] <= v[i+1])
         {
             
